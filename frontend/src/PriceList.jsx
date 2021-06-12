@@ -1,19 +1,20 @@
 import PriceRow from './PriceRow';
 
 const PriceList = ({prices}) => {
-  const priceRows = prices
-    .filter(price => price.key === 'Binance:BTCUSDT')
-    .map(price => <PriceRow key={price.key} price={price} />);
+  const priceRows = prices.map(price =>
+    <PriceRow key={price.key} price={price} />
+  );
 
   return (
     <div>
       <table>
         <thead>
           <tr>
-          <th>Exchange</th>
-          <th>Symbol</th>
-          <th>Last Price</th>
-          <th>24h Change %</th>
+            <th>Exchange</th>
+            <th>Symbol</th>
+            <th>Last Price</th>
+            <th>24h Change %</th>
+            <th>Volume</th>
           </tr>
         </thead>
         <tbody>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 const PriceRow = ({price}) => {
-  const { exchange, symbol, lastPrice, priceChangePercent } = price;
+  const { exchange, symbol, lastPrice, priceChangePercent, volume } = price;
   const prevPriceRef = useRef(0);
   const prevStyleRef = useRef('');
 
@@ -29,8 +29,9 @@ const PriceRow = ({price}) => {
     <tr id={price.key}>
       <td>{exchange}</td>
       <td>{symbol.toUpperCase()}</td>
-      <td className={priceStyle}>{lastPrice.toFixed(2)}</td>
+      <td className={priceStyle}>{lastPrice.toLocaleString()}</td>
       <td className={getPriceChangeStyle()}>{(priceChangePercent * 100).toFixed(2) + '%'}</td>
+      <td>{volume.toLocaleString()}</td>
     </tr>
   );
 }

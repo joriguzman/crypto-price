@@ -24,12 +24,11 @@ namespace CryptoPrice.Api
             _binanceSocketClient = binanceSocketClient;
             _bitfinexSocketClient = bitfinexSocketClient;
 
-            LoadSymbols();
+            SetSymbols();
         }
 
-        private void LoadSymbols()
+        private void SetSymbols()
         {
-            // TODO Refactor
             _binanceSymbols["BTCUSD"] = "BTCUSDT";
             _binanceSymbols["ETHUSD"] = "ETHUSDT";
             _binanceSymbols["DOGEUSD"] = "DOGEUSDT";
@@ -63,10 +62,11 @@ namespace CryptoPrice.Api
                         Exchange = "Bitfinex",
                         Symbol = symbol,
                         LastPrice = data.LastPrice,
+                        Volume = data.Volume,
                         PriceChangePercent = data.DailyChangePercentage
                     };
 
-                    Console.WriteLine($"Bitfinex: {price.Symbol}, {price.LastPrice}");
+                    //Console.WriteLine($"Bitfinex: {price.Symbol}, {price.LastPrice}");
                     Callback?.OnPriceUpdate(price);
                 });
             }
@@ -84,10 +84,11 @@ namespace CryptoPrice.Api
                         Exchange = "Binance",
                         Symbol = symbol,
                         LastPrice = tick.LastPrice,
+                        Volume = tick.QuoteVolume,
                         PriceChangePercent = tick.PriceChangePercent / 100
                     };
 
-                    Console.WriteLine($"Binance: {price.Symbol}, {price.LastPrice}");
+                    //Console.WriteLine($"Binance: {price.Symbol}, {price.LastPrice}");
                     Callback?.OnPriceUpdate(price);
                 }
             });
