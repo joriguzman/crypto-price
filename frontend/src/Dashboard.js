@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import PriceList from './PriceList';
 
 function Dashboard({apiUrl}) {
   const [connection, setConnection] = useState(null);
@@ -26,7 +27,6 @@ function Dashboard({apiUrl}) {
     const newConnection = new HubConnectionBuilder()
       .withUrl(apiUrl)
       .configureLogging(LogLevel.Debug)
-      // .withAutomaticReconnect()
       .build();
 
     newConnection.start()
@@ -67,38 +67,6 @@ const Header = ({message}) => {
     return (
         <h3>{message}</h3>
     );
-}
-
-const PriceList = ({prices}) => {
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-          <th>Exchange</th>
-          <th>Symbol </th>
-          <th>Last Price</th>
-          <th>24h Change %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {prices.map(price => <PriceRow key={price.key} price={price} />)}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-const PriceRow = ({price}) => {
-  const { exchange, symbol, lastPrice, priceChangePercent } = price;
-  return (
-    <tr id={price.key}>
-      <td>{exchange}</td>
-      <td>{symbol.toUpperCase()}</td>
-      <td>{lastPrice.toFixed(2)}</td>
-      <td>{(priceChangePercent * 100).toFixed(2) + '%'}</td>
-    </tr>
-  );
 }
 
 export default Dashboard;
