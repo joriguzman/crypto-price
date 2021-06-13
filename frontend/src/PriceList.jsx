@@ -6,15 +6,15 @@ const PriceList = ({prices}) => {
   );
 
   return (
-    <div>
-      <table>
+    <div id='price-list'>
+      <table className='table is-bordered is-striped is-hoverable'>
         <thead>
           <tr>
             <th>Exchange</th>
             <th>Symbol</th>
             <th>Last Price</th>
             <th>24h Change %</th>
-            <th>Volume</th>
+            <th>USD Volume</th>
           </tr>
         </thead>
         <tbody>

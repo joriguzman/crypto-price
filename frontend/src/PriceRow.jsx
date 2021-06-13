@@ -25,13 +25,20 @@ const PriceRow = ({price}) => {
       priceChangePercent < 0 ? 'red' : null;
   }
 
+  const toPriceFormat = (number, fractionDigits) => {
+    return number.toLocaleString(undefined, {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits
+    });
+  };
+
   return (
     <tr id={price.key}>
       <td>{exchange}</td>
       <td>{symbol.toUpperCase()}</td>
-      <td className={priceStyle}>{lastPrice.toLocaleString()}</td>
+      <td className={priceStyle}>{toPriceFormat(lastPrice, 2)}</td>
       <td className={getPriceChangeStyle()}>{(priceChangePercent * 100).toFixed(2) + '%'}</td>
-      <td>{volume.toLocaleString()}</td>
+      <td>{toPriceFormat(volume, 0)}</td>
     </tr>
   );
 }

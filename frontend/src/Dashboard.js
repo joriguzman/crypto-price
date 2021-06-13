@@ -31,25 +31,30 @@ function Dashboard({apiUrl}) {
 
     newConnection.start()
       .then(() => {
-        console.log('Connected!');
+        console.log('Connected to URL: ', apiUrl);
 
         newConnection.on('UpdatePrice', price => {
-          console.log('UpdatePrice: ', JSON.stringify(price));
           updatePrice(price);
         });
       })
-      .catch(e => console.log('Connection failed: ', e));
+      .catch(e => console.error('Connection failed: ', e));
 
       setConnection(newConnection);
   }, []);
 
   return (
-    <div>
-      <Header message={'Ticker prices'} />
-      <Button handleClick={streamPrices} text="Stream prices"></Button>&nbsp;&nbsp;
-      <Button handleClick={stopStreaming} text="Stop streaming"></Button>
-      <div>
-        <PriceList prices={Object.values(prices)} />
+    <div className='container'>
+      <div className='card'>
+        <div className='card-header'>
+          <div className='card-header-title'>
+            Live Cryptocurrency Prices &nbsp;&nbsp;
+            <Button handleClick={streamPrices} text="Stream prices"></Button>&nbsp;&nbsp;
+            <Button handleClick={stopStreaming} text="Stop streaming"></Button>
+          </div>
+        </div>
+        <div className='card-content'>
+          <PriceList prices={Object.values(prices)} />
+        </div>
       </div>
     </div>
   );
@@ -61,12 +66,6 @@ const Button = ({handleClick, text}) => {
       {text}
     </button>
   );
-}
-
-const Header = ({message}) => {
-    return (
-        <h3>{message}</h3>
-    );
 }
 
 export default Dashboard;

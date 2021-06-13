@@ -9,3 +9,21 @@
 .green {
   color: green;
 }
+
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background: #4a4a4a;
+}
+
+.card-header-title {
+  color: white;
+}
+
+#price-list table {
+  width: 100%;
+  margin: 3px;
+}
