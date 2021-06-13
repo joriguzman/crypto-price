@@ -13,10 +13,10 @@ namespace CryptoPrice.Api
         private readonly IBinanceSocketClient _binanceSocketClient;
         private readonly IBitfinexSocketClient _bitfinexSocketClient;
 
-        private readonly Dictionary<string, string> _binanceSymbols = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> _bitfinexSymbols = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _binanceTickers = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _bitfinexTickers = new Dictionary<string, string>();
 
-        public IPriceCallback Callback { get; set; }
+        public Action<Price> OnPriceUpdate { get; set; }
         public bool IsSubscriptionStarted { get; private set; }
 
         public PriceDataProvider(IBinanceSocketClient binanceSocketClient, IBitfinexSocketClient bitfinexSocketClient)
@@ -24,18 +24,21 @@ namespace CryptoPrice.Api
             _binanceSocketClient = binanceSocketClient;
             _bitfinexSocketClient = bitfinexSocketClient;
 
-            SetSymbols();
+            SetTickers();
         }
 
-        private void SetSymbols()
+        private void SetTickers()
         {
-            _binanceSymbols["BTCUSD"] = "BTCUSDT";
-            _binanceSymbols["ETHUSD"] = "ETHUSDT";
-            _binanceSymbols["DOGEUSD"] = "DOGEUSDT";
+            // Key: Exchange Ticker, Value: Symbol
+            _binanceTickers["BTCUSDT"] = "BTCUSD";
+            _binanceTickers["ETHUSDT"] = "ETHUSD";
+            _binanceTickers["DOGEUSDT"] = "DOGEUSD";
+            _binanceTickers["LTCUSDT"] = "LTCUSD";
 
-            _bitfinexSymbols["BTCUSD"] = "tBTCUSD";
-            _bitfinexSymbols["ETHUSD"] = "tETHUSD";
-            _bitfinexSymbols["DOGEUSD"] = "tDOGE:USD";
+            _bitfinexTickers["tBTCUSD"] = "BTCUSD";
+            _bitfinexTickers["tETHUSD"] = "ETHUSD";
+            _bitfinexTickers["tDOGE:USD"] = "DOGEUSD";
+            _bitfinexTickers["tLTCUSD"] = "LTCUSD";
         }
 
         public async Task StartSubscriptions()
@@ -50,10 +53,10 @@ namespace CryptoPrice.Api
 
         private async Task SubscribeToBitfinex()
         {
-            foreach (var pair in _bitfinexSymbols)
+            foreach (var pair in _bitfinexTickers)
             {
-                var symbol = pair.Key;
-                var exchangeTicker = pair.Value;
+                var exchangeTicker = pair.Key;
+                var symbol = pair.Value;
 
                 await _bitfinexSocketClient.SubscribeToTickerUpdatesAsync(exchangeTicker, data =>
                 {
@@ -62,12 +65,12 @@ namespace CryptoPrice.Api
                         Exchange = "Bitfinex",
                         Symbol = symbol,
                         LastPrice = data.LastPrice,
-                        Volume = data.Volume,
+                        Volume = data.Volume * data.LastPrice, // Volume is base volume, change to USD volume
                         PriceChangePercent = data.DailyChangePercentage
                     };
 
                     //Console.WriteLine($"Bitfinex: {price.Symbol}, {price.LastPrice}");
-                    Callback?.OnPriceUpdate(price);
+                    OnPriceUpdate?.Invoke(price);
                 });
             }
         }
@@ -76,7 +79,7 @@ namespace CryptoPrice.Api
         {
             await _binanceSocketClient.Spot.SubscribeToAllSymbolTickerUpdatesAsync(data =>
             {
-                foreach (var tick in data.Where(t => _binanceSymbols.ContainsValue(t.Symbol)))
+                foreach (var tick in data.Where(t => _binanceTickers.ContainsKey(t.Symbol)))
                 {
                     var symbol = tick.Symbol;
                     Price price = new Price()
@@ -84,12 +87,12 @@ namespace CryptoPrice.Api
                         Exchange = "Binance",
                         Symbol = symbol,
                         LastPrice = tick.LastPrice,
-                        Volume = tick.QuoteVolume,
+                        Volume = tick.QuoteVolume, // USD volume
                         PriceChangePercent = tick.PriceChangePercent / 100
                     };
 
                     //Console.WriteLine($"Binance: {price.Symbol}, {price.LastPrice}");
-                    Callback?.OnPriceUpdate(price);
+                    OnPriceUpdate?.Invoke(price);
                 }
             });
         }

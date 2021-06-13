@@ -25,13 +25,21 @@ namespace CryptoPrice.Api.Hubs
 
         public override Task OnConnectedAsync()
         {
-            _dataProvider.Callback = new PriceCallback(Clients.All);
+            var clients = Clients.All;
+            _dataProvider.OnPriceUpdate = price =>
+            {
+                clients.UpdatePrice(price);
+            };
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            _dataProvider.Callback = new PriceCallback(Clients.All);
+            var clients = Clients.All;
+            _dataProvider.OnPriceUpdate = price =>
+            {
+                clients.UpdatePrice(price);
+            };
             return base.OnDisconnectedAsync(exception);
         }
     }
