@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import PriceList from './PriceList';
+import ConnectionStatus from './ConnectionStatus';
 
 function Dashboard({apiUrl}) {
   const [connection, setConnection] = useState(null);
   const [prices, setPrices] = useState({});
+  const [connectionError, setConnectionError] = useState(false);
 
-  const streamPrices = () => {
+  const startStreaming = () => {
     connection.invoke('StreamPrices')
       .catch(error => console.error('StreamPrices error: ', error));
   };
@@ -36,10 +38,18 @@ function Dashboard({apiUrl}) {
         newConnection.on('UpdatePrice', price => {
           updatePrice(price);
         });
-      })
-      .catch(e => console.error('Connection failed: ', e));
 
-      setConnection(newConnection);
+        newConnection.onclose(() => {
+          setConnectionError(true);
+        });
+      })
+      .then(() => newConnection.invoke('StreamPrices'))
+      .catch(e => {
+        console.error('Connection failed: ', e);
+        setConnectionError(true);
+      });
+
+    setConnection(newConnection);
   }, []);
 
   return (
@@ -48,13 +58,14 @@ function Dashboard({apiUrl}) {
         <div className='card-header'>
           <div className='card-header-title'>
             Live Cryptocurrency Prices &nbsp;&nbsp;
-            <Button handleClick={streamPrices} text="Stream prices"></Button>&nbsp;&nbsp;
+            <Button handleClick={startStreaming} text="Start streaing"></Button>&nbsp;&nbsp;
             <Button handleClick={stopStreaming} text="Stop streaming"></Button>
           </div>
         </div>
         <div className='card-content'>
           <PriceList prices={Object.values(prices)} />
         </div>
+        <ConnectionStatus connectionError={connectionError}/>
       </div>
     </div>
   );
@@ -62,7 +73,7 @@ function Dashboard({apiUrl}) {
 
 const Button = ({handleClick, text}) => {
   return (
-    <button onClick={handleClick}>
+    <button className='button is-primary is-small' onClick={handleClick}>
       {text}
     </button>
   );
