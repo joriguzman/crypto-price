@@ -34,11 +34,15 @@ namespace CryptoPrice.Api
             _binanceTickers["ETHUSDT"] = "ETHUSD";
             _binanceTickers["DOGEUSDT"] = "DOGEUSD";
             _binanceTickers["LTCUSDT"] = "LTCUSD";
+            _binanceTickers["ADAUSDT"] = "ADAUSD";
+            _binanceTickers["XRPUSDT"] = "XRPUSD";
 
             _bitfinexTickers["tBTCUSD"] = "BTCUSD";
             _bitfinexTickers["tETHUSD"] = "ETHUSD";
             _bitfinexTickers["tDOGE:USD"] = "DOGEUSD";
             _bitfinexTickers["tLTCUSD"] = "LTCUSD";
+            _bitfinexTickers["tADAUSD"] = "ADAUSD";
+            _bitfinexTickers["tDOTUST"] = "DOTUSD";
         }
 
         public async Task StartSubscriptions()
