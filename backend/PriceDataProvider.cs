@@ -65,7 +65,7 @@ namespace CryptoPrice.Api
                         Exchange = "Bitfinex",
                         Symbol = symbol,
                         LastPrice = data.LastPrice,
-                        Volume = data.Volume * data.LastPrice, // Volume is base volume, change to USD volume
+                        Volume = data.Volume * data.LastPrice, // Volume is base volume, change to alternate volume
                         PriceChangePercent = data.DailyChangePercentage
                     };
 

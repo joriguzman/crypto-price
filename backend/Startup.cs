@@ -72,7 +72,6 @@ namespace CryptoPrice.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CryptoPrice.Api v1"));
             }
 
-            // Remove if CORS/https error
             app.UseHttpsRedirection();
 
             app.UseCors("ClientPermission");
