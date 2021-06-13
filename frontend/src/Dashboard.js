@@ -4,19 +4,8 @@ import PriceList from './PriceList';
 import ConnectionStatus from './ConnectionStatus';
 
 function Dashboard({apiUrl}) {
-  const [connection, setConnection] = useState(null);
   const [prices, setPrices] = useState({});
   const [connectionError, setConnectionError] = useState(false);
-
-  const startStreaming = () => {
-    connection.invoke('StreamPrices')
-      .catch(error => console.error('StreamPrices error: ', error));
-  };
-
-  const stopStreaming = () => {
-    connection.invoke('StopStreaming')
-      .catch(error => console.error('StopStreaming error: ', error));
-  };
 
   const updatePrice = price => {
     let newPrices = prices;
@@ -48,8 +37,6 @@ function Dashboard({apiUrl}) {
         console.error('Connection failed: ', e);
         setConnectionError(true);
       });
-
-    setConnection(newConnection);
   }, []);
 
   return (
@@ -57,9 +44,7 @@ function Dashboard({apiUrl}) {
       <div className='card'>
         <div className='card-header'>
           <div className='card-header-title'>
-            Live Cryptocurrency Prices &nbsp;&nbsp;
-            <Button handleClick={startStreaming} text="Start streaing"></Button>&nbsp;&nbsp;
-            <Button handleClick={stopStreaming} text="Stop streaming"></Button>
+            Live Cryptocurrency Prices
           </div>
         </div>
         <div className='card-content'>
@@ -68,14 +53,6 @@ function Dashboard({apiUrl}) {
         <ConnectionStatus connectionError={connectionError}/>
       </div>
     </div>
-  );
-}
-
-const Button = ({handleClick, text}) => {
-  return (
-    <button className='button is-primary is-small' onClick={handleClick}>
-      {text}
-    </button>
   );
 }
 
